@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 // Entry is a single accounting record for one LLM completion.

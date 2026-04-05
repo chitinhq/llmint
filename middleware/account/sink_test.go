@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 func sampleEntry() Entry {

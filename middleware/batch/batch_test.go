@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/middleware/batch"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/middleware/batch"
 )
 
 // countingProvider counts the number of Complete calls.

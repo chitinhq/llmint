@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/provider/openai"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/provider/openai"
 )
 
 func TestComputeCostDeepSeek(t *testing.T) {

@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-go get github.com/AgentGuardHQ/llmint
+go get github.com/chitinhq/llmint
 ```
 
 ## Core concepts
@@ -24,8 +24,8 @@ go get github.com/AgentGuardHQ/llmint
 ```go
 import (
     "context"
-    "github.com/AgentGuardHQ/llmint"
-    "github.com/AgentGuardHQ/llmint/provider/mock"
+    "github.com/chitinhq/llmint"
+    "github.com/chitinhq/llmint/provider/mock"
 )
 
 p := mock.New("claude-3-5-sonnet-20241022", "Hello, world!")

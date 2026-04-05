@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 const (

@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/middleware/promptcache"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/middleware/promptcache"
 )
 
 // capturingProvider records a copy of every *Request passed to Complete.

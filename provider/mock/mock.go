@@ -7,7 +7,7 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 // Provider is a mock llmint.Provider that returns a pre-configured response.

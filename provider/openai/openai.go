@@ -8,7 +8,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 const (

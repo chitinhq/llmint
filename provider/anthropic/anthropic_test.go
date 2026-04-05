@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/provider/anthropic"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/provider/anthropic"
 )
 
 func TestComputeCostHaiku(t *testing.T) {

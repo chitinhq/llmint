@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 // options holds configuration for the batch middleware.

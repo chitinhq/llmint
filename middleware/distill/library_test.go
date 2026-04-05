@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/AgentGuardHQ/llmint/middleware/distill"
+	"github.com/chitinhq/llmint/middleware/distill"
 )
 
 func TestMemoryLibraryRegisterLookup(t *testing.T) {

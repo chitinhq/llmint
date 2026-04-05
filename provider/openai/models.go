@@ -4,7 +4,7 @@
 package openai
 
 import (
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 // DeepSeekModels contains pricing data for DeepSeek models hosted on the

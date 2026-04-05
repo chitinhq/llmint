@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/middleware/cascade"
-	"github.com/AgentGuardHQ/llmint/provider/mock"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/middleware/cascade"
+	"github.com/chitinhq/llmint/provider/mock"
 )
 
 // shortScorer always returns a low confidence score to force escalation.

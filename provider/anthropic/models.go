@@ -3,7 +3,7 @@
 package anthropic
 
 import (
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 // Models contains pricing data for supported Claude models.

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/provider/mock"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/provider/mock"
 )
 
 func TestMockName(t *testing.T) {

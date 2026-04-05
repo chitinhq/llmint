@@ -3,7 +3,7 @@ package distill
 import (
 	"context"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 const defaultMinSavings = 0.0

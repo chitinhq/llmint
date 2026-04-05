@@ -5,8 +5,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/middleware/distill"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/middleware/distill"
 )
 
 // capturingProvider captures the last *Request passed to Complete.

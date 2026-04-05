@@ -9,11 +9,11 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/AgentGuardHQ/llmint"
-	"github.com/AgentGuardHQ/llmint/middleware/account"
-	"github.com/AgentGuardHQ/llmint/middleware/cascade"
-	"github.com/AgentGuardHQ/llmint/middleware/dedup"
-	"github.com/AgentGuardHQ/llmint/provider/mock"
+	"github.com/chitinhq/llmint"
+	"github.com/chitinhq/llmint/middleware/account"
+	"github.com/chitinhq/llmint/middleware/cascade"
+	"github.com/chitinhq/llmint/middleware/dedup"
+	"github.com/chitinhq/llmint/provider/mock"
 )
 
 // ---- Local stats sink --------------------------------------------------

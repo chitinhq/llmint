@@ -3,7 +3,7 @@ package cascade
 import (
 	"testing"
 
-	"github.com/AgentGuardHQ/llmint"
+	"github.com/chitinhq/llmint"
 )
 
 func textResp(text string) *llmint.Response {
