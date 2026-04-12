@@ -121,6 +121,21 @@ go test ./...
 golangci-lint run
 ```
 
+## Part of the Chitin Platform
+
+LLMint is a standalone Go library, usable independently. It's also part
+of the Chitin platform:
+
+| Repo | Role | Start here if you want to… |
+|------|------|------------------------------|
+| [chitin](https://github.com/chitinhq/chitin) | Governance kernel — policy, invariants, hooks | Gate an agent you already use |
+| [shellforge](https://github.com/chitinhq/shellforge) | Local governed agent runtime | Run a governed agent end-to-end |
+| [octi](https://github.com/chitinhq/octi) | Swarm coordinator — triage, dispatch, routing | Orchestrate multiple agents |
+| [sentinel](https://github.com/chitinhq/sentinel) | Telemetry + detection on agent traces | Analyze how agents fail |
+| **llmint** (this repo) | Token-economics middleware for LLM providers | Control LLM cost in Go apps |
+
+New to the platform? See [chitin's GETTING_STARTED.md](https://github.com/chitinhq/chitin/blob/main/GETTING_STARTED.md).
+
 ## License
 
 MIT
