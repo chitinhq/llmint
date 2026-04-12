@@ -4,29 +4,29 @@ Token economics library for Go. Provider abstractions, composable middleware for
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    App[Application] --> Chain
+```text
+  [ Application ]
+        |
+        v
+  Middleware Stack (composable; outer to inner)
+  -----------------------------------------
+    [ llmint.Chain ]
+         |
+         v
+     account  ->  dedup  ->  batch  ->  promptcache  ->  distill  ->  cascade
+                                                                         |
+  -----------------------------------------                              |
+                                                                         |
+  Providers ------------------------------                               |
+    [ provider/anthropic ]  <---+                                        |
+    [ provider/openai ]    <----+<------- cascade -----------------------+
+    [ provider/mock ]      <----+
+  -----------------------------------------
 
-    subgraph "Middleware Stack (composable)"
-        Chain[llmint.Chain] --> Account[account]
-        Account --> Dedup[dedup]
-        Dedup --> Batch[batch]
-        Batch --> PromptCache[promptcache]
-        PromptCache --> Distill[distill]
-        Distill --> Cascade[cascade]
-    end
-
-    subgraph Providers
-        Cascade --> Anthropic[provider/anthropic]
-        Cascade --> OpenAI[provider/openai]
-        Cascade --> Mock[provider/mock]
-    end
-
-    subgraph "Bindings"
-        CABI[cabi/ — C FFI] --> Chain
-        Python[python/ — analytics] -.->|cost data| App
-    end
+  Bindings
+  --------
+    cabi/    (C FFI)    ----> llmint.Chain
+    python/  (analytics) -.-> cost data -> Application
 ```
 
 ## Install
