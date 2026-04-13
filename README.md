@@ -1,141 +1,89 @@
 # LLMint
 
-Token economics library for Go. Provider abstractions, composable middleware for caching, cascading, dedup, batching, and distillation, with built-in cost tracking. Pure library -- no binaries.
+**Go library for tracking and controlling what your LLM calls cost.**
 
-## Architecture
+LLMint wraps calls to LLM providers (Anthropic, OpenAI, others) in a
+middleware chain so you can see, in USD, what each request cost and
+how much you saved from caching, deduping, or routing to a cheaper
+model.
 
-```text
-  [ Application ]
-        |
-        v
-  Middleware Stack (composable; outer to inner)
-  -----------------------------------------
-    [ llmint.Chain ]
-         |
-         v
-     account  ->  dedup  ->  batch  ->  promptcache  ->  distill  ->  cascade
-                                                                         |
-  -----------------------------------------                              |
-                                                                         |
-  Providers ------------------------------                               |
-    [ provider/anthropic ]  <---+                                        |
-    [ provider/openai ]    <----+<------- cascade -----------------------+
-    [ provider/mock ]      <----+
-  -----------------------------------------
+It is a pure Go library. No binaries, no services, zero external
+dependencies. You import it and wrap your provider client.
 
-  Bindings
-  --------
-    cabi/    (C FFI)    ----> llmint.Chain
-    python/  (analytics) -.-> cost data -> Application
-```
+LLMint is the **metabolism** of the Chitin Platform — the layer that
+decides how tokens (energy) get spent.
 
-## Install
+## What problem does this solve?
+
+Agent fleets burn tokens. Without accounting you get a monthly bill
+and no idea which agent, which prompt, or which model tier caused it.
+LLMint gives you:
+
+- Per-request USD cost, derived from each model's pricing table.
+- A pluggable sink so cost data lands wherever you want (stdout, DB,
+  Prometheus).
+- Composable middleware to reduce the bill: dedup identical requests,
+  batch small ones, cache long system prompts, cascade from cheap to
+  expensive models only when confidence is low.
+
+## Try it
 
 ```bash
 go get github.com/chitinhq/llmint
 ```
 
-Requires Go 1.18+. Zero external dependencies -- the library is pure Go.
-
-## Core Types
-
-| Type | Purpose |
-|------|---------|
-| `Provider` | Interface every LLM backend implements (`Complete`, `Name`, `Models`) |
-| `Middleware` | `func(Provider) Provider` -- wraps providers with cross-cutting concerns |
-| `Request` / `Response` | Canonical provider-agnostic input/output |
-| `ModelInfo` | Per-model pricing: input, output, cache read/write per million tokens |
-| `Usage` | Raw token counts + `ComputeCost(ModelInfo)` for USD calculation |
-| `Savings` | Per-technique savings record; `TotalSavings()` aggregates a slice |
-| `CacheStatus` | `CacheMiss` / `CacheHit` / `CachePartial` |
-
-## Quick Start
-
 ```go
 import (
     "context"
     "github.com/chitinhq/llmint"
-    "github.com/chitinhq/llmint/provider/mock"
+    "github.com/chitinhq/llmint/middleware/account"
     "github.com/chitinhq/llmint/middleware/dedup"
-    "github.com/chitinhq/llmint/middleware/cascade"
+    "github.com/chitinhq/llmint/provider/anthropic"
 )
 
-// Basic completion
-p := mock.New("claude-3-5-sonnet-20241022", "Hello!")
+// Wrap a provider with dedup (cache identical requests) + account
+// (record cost). Middleware composes left-to-right, outermost first.
+base := anthropic.New("sk-ant-...")
+p := llmint.Chain(account.New(sink), dedup.New())(base)
+
 resp, err := p.Complete(context.Background(), &llmint.Request{
     Model:    "claude-3-5-sonnet-20241022",
     Messages: []llmint.Message{{Role: "user", Content: "Hi"}},
 })
-
-// Middleware composition (applied left-to-right, first = outermost)
-wrapped := llmint.Chain(logging, rateLimit, cache)(baseProvider)
+// resp.Usage.ComputeCost(modelInfo) returns the USD cost.
 ```
 
-## Middleware
+### Middleware you can stack
 
-| Package | Purpose |
-|---------|---------|
-| `middleware/account` | Records usage entries (tokens, cost, duration) to a pluggable `Sink` |
-| `middleware/dedup` | Caches responses by request hash; returns `CacheHit` on duplicates |
-| `middleware/batch` | Queues requests, flushes on size threshold or time window |
-| `middleware/promptcache` | Annotates requests with `cache_control: ephemeral` for provider-side prompt caching |
-| `middleware/distill` | Replaces system prompts with shorter distilled equivalents from a `Library` |
-| `middleware/cascade` | Escalates through model tiers (cheap to expensive) based on confidence scoring |
+| Package                  | What it does                                            |
+|--------------------------|---------------------------------------------------------|
+| `middleware/account`     | Records tokens, cost, and duration to a pluggable sink  |
+| `middleware/dedup`       | Caches responses by request hash (identical-in, cached) |
+| `middleware/batch`       | Queues requests, flushes on size or time                |
+| `middleware/promptcache` | Marks system prompts for provider-side prompt caching   |
+| `middleware/distill`     | Replaces long system prompts with shorter equivalents   |
+| `middleware/cascade`     | Tries cheap models first, escalates on low confidence   |
 
-### Cascade Example
+### Providers
 
-```go
-models := []cascade.Model{
-    {Provider: haiku, Name: "haiku", Threshold: 0.8},
-    {Provider: sonnet, Name: "sonnet", Threshold: 0.6},
-    {Provider: opus, Name: "opus", Threshold: 0},  // always accept
-}
-p := cascade.New(models, cascade.WithMaxEscalations(2))(nil)
-```
+`provider/anthropic`, `provider/openai`, `provider/mock` (for tests).
 
-## Providers
+## Where next
 
-| Package | Backend |
-|---------|---------|
-| `provider/anthropic` | Anthropic Messages API (Claude) |
-| `provider/openai` | OpenAI Chat Completions API (GPT-4o, etc.) |
-| `provider/mock` | Deterministic responses for testing |
-
-## C Bindings
-
-The `cabi/` directory exposes LLMint as a shared library via cgo for use from C, Python, or any FFI-capable language:
-
-```bash
-cd cabi && make
-```
-
-## Python Analytics
-
-The `python/` directory contains a separate Python package for cost analytics and reporting.
+- [`cabi/`](./cabi/) — C FFI bindings if you want to call LLMint from
+  Python, Ruby, or anything else that speaks C.
+- [`python/`](./python/) — separate Python package for cost analytics
+  on what LLMint's sink writes out.
+- [Chitin Platform overview](https://github.com/chitinhq/workspace) —
+  LLMint works standalone, but it is also the cost layer for
+  Chitin-governed agent fleets.
 
 ## Development
 
 ```bash
 go build ./...
 go test ./...
-golangci-lint run
 ```
-
-## Part of the Chitin Platform
-
-LLMint is a standalone Go library, usable independently. It's also part
-of the Chitin platform:
-
-| Repo | Role | Start here if you want to… |
-|------|------|------------------------------|
-| [chitin](https://github.com/chitinhq/chitin) | Governance kernel — policy, invariants, hooks | Gate an agent you already use |
-| [shellforge](https://github.com/chitinhq/shellforge) | Local governed agent runtime | Run a governed agent end-to-end |
-| [octi](https://github.com/chitinhq/octi) | Swarm coordinator — triage, dispatch, routing | Orchestrate multiple agents |
-| [sentinel](https://github.com/chitinhq/sentinel) | Telemetry + detection on agent traces | Analyze how agents fail |
-| **llmint** (this repo) | Token-economics middleware for LLM providers | Control LLM cost in Go apps |
-| [atlas](https://github.com/chitinhq/atlas) | Workspace starter kit — knowledge graphs + LLM-compiled wikis | Wrap your repos in AI-powered knowledge tooling |
-
-New to the platform? See [chitin's GETTING_STARTED.md](https://github.com/chitinhq/chitin/blob/main/GETTING_STARTED.md).
 
 ## License
 
